@@ -3,13 +3,61 @@
 
 <head>
     <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/font-awesome-4.7.0/css/font-awesome.min.css">
     <meta charset="utf-8">
+
     <title>CodingLinの博客</title>
     <style>
         body {
             background-image: url('background.png');
             background-repeat: no-repeat;
+            margin: 0;
+            padding: 0;
+            font-family: 'Microsoft YaHei', sans-serif;
         }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #FFFFFF;
+            width: 100%;
+            position: fixed;
+            /* 固定定位 */
+            top: 0;
+            /* 紧贴视口顶部 */
+
+        }
+
+        li {
+            float: left;
+            background-color: #FFFFFF;
+
+        }
+
+        .li-overmouse {
+            background-color: #FFFFFF;
+
+        }
+
+        .li-mouseout {
+            background-color: #D3D3D3;
+
+        }
+
+        li a {
+            display: block;
+            color: black;
+            text-align: center;
+            padding: 14px 16px;
+            text-decoration: none;
+        }
+
+        li a:hover:not(.active) {
+            background-color: rgb(245 245 245);
+        }
+
 
         .footer {
             position: fixed;
@@ -18,57 +66,188 @@
             width: 100%;
             height: 50px;
             z-index: 9999;
-            color: rgb(35, 133, 190);
+            color: rgb(79, 191, 255);
             font-size: 20;
-            text-align: center;
+            text-align: right;
         }
 
         .logo {
-            width: 100px;
-            height: 100px;
+            width: 40px;
+            height: 40px;
             float: left;
-            border-radius: 15px;
+            border-radius: 150px;
             opacity: 0.7;
             position: relative;
-            left: 580px;
+            left: 100px;
+            top: 5px;
+            z-index: 7;
+            transform: rotate(0deg);
+            animation: rotate_move-x 1.2s ease-in-out forwards;
 
         }
+
+        .info {
+            position: relative;
+            left: 730px;
+            top: 450px;
+            opacity: 0.8;
+
+        }
+
+        @keyframes rotate_move-x {
+            from {
+                transform: translateX(0px) rotate(0deg);
+            }
+
+            to {
+                transform: translateX(200px) rotate(360deg);
+            }
+        }
+
+
+        #typing-effect {
+
+            position: absolute;
+            top: 80px;
+            left: 450px;
+            font-size: 50px;
+            font-weight: bold;
+            line-height: 1.8;
+            color: #FFFFFF;
+            white-space: pre-wrap;
+            overflow: hidden;
+
+
+        }
+
+        #typing-effect::after {
+            content: "|";
+            /* 模拟光标 */
+            animation: blink 1s infinite;
+
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0;
+            }
+        }
     </style>
+
 </head>
 
 
 <body>
 
     <div>
-        <img class="logo" id="logo" src='logo.png' alt="竟然没显示出来？？！！" />
+        <div id="typing-effect"></div>
+    </div>
+    <div>
+        <ul>
+            <img class="logo" id="logo" src='logo.png' alt="竟然没显示出来？？！！" />
+            <li><a onmouseover="li-mouseover" onmouseout="li-mouseout" href="#home">主页</a></li>
+            <li style="float:right"><a onmouseover="li-mouseover" onmouseout="li-mouseout" href="#about">关于</a></li>
+        </ul>
     </div>
 
     <div>
-        <b style="font-size: 40px;color: beige;position: relative;left: 610px;top: 35px;">欢迎来到CodingLin的blog</b>
+        <div>
+            <canvas id="info" class="info" width="470" height="270"></canvas>
+        </div>
     </div>
-
 
     <div class="footer"><a href="https://vdse.bdstatic.com//192d9a98d782d9c74c96f09db9378d93.mp4">免责声明</a></div>
 
-    <script>
-        var divElement = document.getElementById("logo");
 
-        divElement
-            .addEventListener("mouseover", function () {
-                // 修改<div>标签的样式
-                divElement
-                    .style.borderRadius = "0px";
-            });
-
-        divElement
-            .addEventListener("mouseout", function () {
-                // 恢复<div>标签的原始样式
-                divElement
-                    .style.borderRadius = "15px";
-            });
-    </script>
     <script src="jpuer.js"></script>
+    <script>
+        var c = document.getElementById("info");
+        const ctx = c.getContext('2d');
+        const width = 470;
+        const height = 270;
+        let opacity = 0;
+        let lineProgress = 10;
 
+        // 动画函数
+        function animateCanvas() {
+            ctx.clearRect(0, 0, width, height);
+
+            // 绘制带透明度的背景
+            ctx.save();
+            ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+            ctx.fillRect(0, 0, width, height);
+            ctx.restore();
+
+            // 绘制圆角矩形路径
+            ctx.beginPath();
+            ctx.moveTo(15, 0);
+            ctx.arcTo(width, 0, width, height, 15);
+            ctx.arcTo(width, height, 0, height, 15);
+            ctx.arcTo(0, height, 0, 0, 15);
+            ctx.arcTo(0, 0, width, 0, 15);
+            ctx.closePath();
+
+            // 添加边框绘制（关键修改部分）
+            ctx.save();
+            ctx.strokeStyle = 'black'; // 边框颜色（适配白色的浅灰色）
+            ctx.lineWidth = 3;           // 边框粗细
+            ctx.stroke();                // 绘制边框
+            ctx.restore();
+
+            ctx.clip(); // 保持裁剪区域
+
+            // 绘制文字
+            ctx.fillStyle = '#2D2D2D';
+            ctx.font = "bold 30px Microsoft YaHei";
+            ctx.fillText("⛏️Github免费部署网站", 58, 35);
+
+            // 绘制渐进式线条
+            ctx.beginPath();
+            ctx.moveTo(20, 50);
+            ctx.lineTo(lineProgress, 50);
+            ctx.strokeStyle = 'rgba(220,220,220,1.0)';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // 缓动计算
+            const easeOut = (t) => t * (2 - t);
+            const progress = easeOut(opacity);
+            lineProgress = 20 + (420 * progress);
+
+            // 更新进度
+            opacity = Math.min(1, opacity + 0.01);
+            lineProgress = Math.min(440, lineProgress + 3);
+
+            if (opacity < 1 || lineProgress < 440) {
+                requestAnimationFrame(animateCanvas);
+            }
+        }
+
+        // 启动动画
+        animateCanvas();
+    </script>
+    <!---标题文字动画-->>
+    <script>
+        const text = "欢迎来到CodingLin的个人博客(๑╹◡╹)ﾉ";
+        const typingElement = document.getElementById('typing-effect');
+        let index = 0;
+
+        function typeWriter() {
+            if (index < text.length) {
+                typingElement.textContent += text.charAt(index);
+                index++;
+                setTimeout(typeWriter, 65); // 调整这个时间以改变打字速度
+            }
+        }
+
+        typeWriter();
+    </script>
 </body>
 
 </html>
