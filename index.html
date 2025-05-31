@@ -87,6 +87,11 @@
         }
 
         .info {
+
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+            /* 保持居中缩放 */
+
             position: relative;
             left: 730px;
             top: 450px;
@@ -207,6 +212,7 @@
             ctx.font = "bold 30px Microsoft YaHei";
             ctx.fillText("⛏️Github免费部署网站", 58, 35);
 
+
             // 绘制渐进式线条
             ctx.beginPath();
             ctx.moveTo(20, 50);
@@ -227,10 +233,87 @@
             if (opacity < 1 || lineProgress < 440) {
                 requestAnimationFrame(animateCanvas);
             }
+
+
+            const icon = new Image();
+            icon.src = 'GitHub-Logo.png'; // 替换为实际图标路径
+            icon.onload = function () {
+                ctx.drawImage(icon, 115, 85, 225, 120); // 在指定位置绘制图标
+            };
+
+
+            //设置阴影参数
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)'; // 阴影颜色（黑色，50%透明度）
+            ctx.shadowBlur = 10;      // 阴影模糊度（像素）
+            ctx.shadowOffsetX = 5;    // 水平偏移量（正数向右）
+            ctx.shadowOffsetY = 5;    // 垂直偏移量（正数向下）
+            // 起始点
+            ctx.beginPath();
+            ctx.moveTo(78, 65);
+            ctx.lineTo(380, 65);
+            ctx.arcTo(390, 65, 420, 170, 10);
+            ctx.lineTo(390, 237);
+            ctx.arcTo(390, 247, 360, 247, 10);
+            ctx.lineTo(78, 247);
+            ctx.arcTo(68, 247, 68, 217, 10);
+            ctx.lineTo(68, 70);
+            ctx.arcTo(68, 65, 78, 65, 10);
+
+
+            // 绘制路径
+            ctx.strokeStyle = 'black';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+
+            let isAnimating = false;
+
+            // 鼠标交互处理
+            function handleHover(isEnter) {
+                if (isAnimating) return;
+
+                const targetScale = isEnter ? 1.05 : 1;
+                const startTime = Date.now();
+
+                function animate() {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / 50, 1); // 400ms动画
+
+                    // 使用自定义缓动函数
+                    const eased = easeOutCubic(progress);
+                    c.style.transform = `scale(${1 + (targetScale - 1) * eased})`;
+
+                    if (progress < 1) {
+                        isAnimating = true;
+                        requestAnimationFrame(animate);
+                    } else {
+                        isAnimating = false;
+                    }
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            // 缓动函数
+            function easeOutCubic(t) {
+                return (--t) * t * t + 1;
+            }
+
+            // 事件绑定
+            c.addEventListener('mouseenter', () => handleHover(true));
+            c.addEventListener('mouseleave', () => handleHover(false));
+
+
+
         }
 
         // 启动动画
         animateCanvas();
+        c.addEventListener('click', () => {
+            // 跳转到目标网址（新标签页打开）
+            window.open('https://www.github.com', '_blank');
+
+        });
     </script>
     <!---标题文字动画-->>
     <script>
